@@ -1,174 +1,154 @@
-Customer Segmentation Code Documentation
-📌 Overview
+# 📊 Customer Segmentation Pipeline
 
-This project provides a Python-based pipeline for generating synthetic telecom customer data, performing exploratory data analysis (EDA), and applying data cleaning techniques.
+A robust Python pipeline for generating synthetic telecom customer data, performing exploratory data analysis (EDA), and applying thorough data cleaning & preprocessing. This project simulates real-world telecom data challenges such as missing values, outliers, and inconsistencies—laying the foundation for effective customer segmentation (e.g., for operators like Vodafone).
 
-The goal is to build a customer segmentation system for a telecom operator (e.g., Vodafone), simulating real-world data challenges such as missing values, outliers, and inconsistencies.
+---
 
-The project is divided into three main components:
+## 🚦 Project Structure
 
-Synthetic Data Generation
+The pipeline consists of three main stages:
 
-Exploratory Data Analysis (EDA)
+1. **Synthetic Data Generation**  
+   Create realistic telecom customer datasets with built-in data "dirtiness" for ML-ready workflows.
 
-Data Cleaning & Preprocessing
+2. **Exploratory Data Analysis (EDA)**  
+   Profile, visualize, and detect anomalies in the raw dataset.
 
-Key Libraries: pandas, numpy, random, faker, datetime, matplotlib, seaborn, sklearn.preprocessing
+3. **Data Cleaning & Preprocessing**  
+   Clean, impute, and engineer features for downstream analytics or ML.
 
-🔹 1. Synthetic Data Generation
-Functionality
+---
 
-The generate_customer_data function creates a dataset with 28 attributes for a given number of customer records (default: 1000). The dataset simulates demographics, service usage, and telecom-specific features.
+## 🏗️ Key Technologies
 
-Inputs
+- **Core Libraries:** `pandas`, `numpy`, `random`, `faker`, `datetime`
+- **Visualization:** `matplotlib`, `seaborn`
+- **Preprocessing:** `sklearn.preprocessing`
 
-num_records (int): Number of records to generate (default = 1000).
+---
 
-Outputs
+## 1️⃣ Synthetic Data Generation
 
-CSV file: customer_segmentation_dirty_data.csv
+- **Function:** `generate_customer_data`
+- **Purpose:** Generates a dataset with 28 attributes (demographics, service usage, telecom features).
+- **Inputs:**  
+  - `num_records` (int, default=1000): Number of customers to simulate.
+- **Outputs:**  
+  - `customer_segmentation_dirty_data.csv`
 
-Key Features
+**Features:**
 
-Realistic Data: Uses faker for customer names and random for service attributes.
+- **Realistic Profiles:** Names from `faker`, randomized service attributes.
+- **Telecom-Specific Columns:** Demographics, package type, tenure, spend, device, etc.
+- **Behavior Simulation:** Postpaid users show higher spend & tenure vs. Prepaid.
+- **Data Dirtiness:**
+  - *Missing Values:* Age (5%), Location (3%), AvgMonthlyDataGB (7%), PlanType (2%), VodafoneCashUsage (10%)
+  - *Outliers:* Spend (1%), Data usage (0.5%)
+  - *Inconsistencies:* Device flags (2%), tenure anomalies (1%)
 
-Telecom-Specific Attributes: Includes demographics, package type, tenure, spend, device type, etc.
+---
 
-Plan-Based Behavior: Postpaid users generally have higher spend and longer tenure than Prepaid.
+## 2️⃣ Exploratory Data Analysis (EDA)
 
-Data Dirtiness:
+- **Input:** `customer_segmentation_dirty_data.csv`
+- **Outputs:**  
+  - Console logs (info, stats, missing/outlier/inconsistency reports)
+  - PNG plots:
+    - `age_distribution_dirty.png`
+    - `spend_by_plan_type_dirty.png`
+    - `correlation_matrix_dirty.png`
+    - `churn_status_distribution_dirty.png`
+    - `payment_method_distribution_dirty.png`
 
-Missing Values: Age (5%), Location (3%), AvgMonthlyDataGB (7%), PlanType (2%), VodafoneCashUsage (10%).
+**Key Steps:**
 
-Outliers: Spend (1%), Data usage (0.5%).
+- **Profiling:** Shape, columns, descriptive stats.
+- **Missing Value Analysis:** Count & percent per column.
+- **Outlier Detection:** IQR method (1.5 × IQR rule).
+- **Inconsistency Checks:** Device capability mismatches, tenure anomalies.
+- **Visualization:** Histograms, boxplots, heatmaps, count plots.
 
-Inconsistencies: Incorrect 4G/5G flags (2%), unusual tenure values (1%).
+---
 
-🔹 2. Exploratory Data Analysis (EDA)
-Functionality
+## 3️⃣ Data Cleaning & Preprocessing
 
-Analyzes the raw dataset (customer_segmentation_dirty_data.csv) to detect missing values, outliers, and inconsistencies, while generating insights through visualizations.
+- **Function:** `preprocess_customer_data`
+- **Input:** `customer_segmentation_dirty_data.csv`
+- **Output:** `customer_segmentation_cleaned_data.csv`
 
-Inputs
+**Cleaning Logic:**
 
-customer_segmentation_dirty_data.csv
+- **Missing Values:**
+  - *Age, AvgMonthlyDataGB:* Median imputation
+  - *Location, PlanType:* Mode imputation
+  - *VodafoneCashUsage:* Imputed as 0
+  - *InterconnectedRelativePackage:* Imputed as "None"
+- **Outliers:** Capped using IQR bounds.
+- **Inconsistencies:**
+  - Align phone models with correct 4G/5G capabilities
+  - Cap Prepaid tenure at 60 months
+  - Enforce Postpaid tenure ≥ 12 months
+- **Feature Engineering:** Convert `DevicePurchaseDate` to `datetime`
+- **(Optional):** One-hot encoding & scaling (commented for flexibility)
+- **Validation:** Prints missing stats before & after cleaning
 
-Outputs
+---
 
-Console Logs: Dataset info, descriptive stats, missing values summary, outlier counts, inconsistency reports.
+## ⚙️ Key Parameters & Configurations
 
-Visualizations (PNG files):
+- **Phone Models Dictionary:** Maps devices to valid 4G/5G
+- **Predefined Categories:** Locations, package types, payment methods
+- **Data Dirtiness:** Missing/outlier rates are tunable in `generate_customer_data`
+- **Adjustable:**  
+  - `num_records` (dataset size)
+  - Outlier detection IQR bounds
 
-age_distribution_dirty.png
+---
 
-spend_by_plan_type_dirty.png
+## 🚀 Usage
 
-correlation_matrix_dirty.png
-
-churn_status_distribution_dirty.png
-
-payment_method_distribution_dirty.png
-
-Key Features
-
-Data Profiling: Shape, column info, summary statistics.
-
-Missing Value Report: Counts and percentages.
-
-Outlier Detection: IQR method (1.5 * IQR).
-
-Inconsistency Detection: Device capability mismatches, tenure anomalies.
-
-Visualization: Histograms, boxplots, heatmaps, and count plots.
-
-🔹 3. Data Cleaning & Preprocessing
-Functionality
-
-The preprocess_customer_data function cleans the dataset by handling missing values, outliers, and inconsistencies.
-
-Inputs
-
-Raw dirty dataset (customer_segmentation_dirty_data.csv)
-
-Outputs
-
-CSV file: customer_segmentation_cleaned_data.csv
-
-Key Features
-
-Missing Value Handling:
-
-Age, AvgMonthlyDataGB → Median imputation
-
-Location, PlanType → Mode imputation
-
-VodafoneCashUsage → Replaced with 0
-
-InterconnectedRelativePackage → "None"
-
-Outlier Capping: IQR-based capping.
-
-Inconsistency Fixes:
-
-Aligns phone models with true 4G/5G capability.
-
-Caps Prepaid tenure at 60 months.
-
-Ensures Postpaid tenure ≥ 12 months.
-
-Feature Engineering: Converts DevicePurchaseDate to datetime.
-
-Optional Preprocessing: One-hot encoding & scaling (commented for flexibility).
-
-Validation: Prints missing value stats before & after cleaning.
-
-⚙️ Key Parameters & Configurations
-
-Phone Models Dictionary: Maps devices to valid 4G/5G capabilities.
-
-Predefined Categories: Locations, package types, payment methods.
-
-Data Dirtiness Probability: Tunable missing/outlier rates in generate_customer_data.
-
-Adjustable Parameters:
-
-num_records (dataset size).
-
-Outlier detection IQR bounds.
-
-🚀 Usage
-
-Install Dependencies:
-
+**Install Dependencies:**
+```sh
 pip install pandas numpy faker matplotlib seaborn scikit-learn
+```
 
+**Run Pipeline (in order):**
+```sh
+python generate_data.py       # Step 1: Generate synthetic dirty data
+python analyze_data.py        # Step 2: EDA & anomaly detection
+python preprocess_data.py     # Step 3: Clean & preprocess data
+```
 
-Run Scripts in Order:
+**Generated Outputs:**
+- `customer_segmentation_dirty_data.csv`
+- `customer_segmentation_cleaned_data.csv`
+- EDA plots:  
+  - `age_distribution_dirty.png`  
+  - `spend_by_plan_type_dirty.png`  
+  - `correlation_matrix_dirty.png`  
+  - `churn_status_distribution_dirty.png`  
+  - `payment_method_distribution_dirty.png`
 
-python generate_data.py      # Generate dirty dataset
-python analyze_data.py       # Perform EDA
-python preprocess_data.py    # Clean dataset
+---
 
+## 📌 Assumptions & Limitations
 
-Generated Output Files:
+**Assumptions**
+- Synthetic data mimics typical telecom patterns (e.g., postpaid → higher spend & tenure).
+- Distributions approximate real-world customer behavior.
 
-customer_segmentation_dirty_data.csv
+**Limitations**
+- Synthetic data may not cover all real-world customer nuances.
+- Basic visualizations; extend for advanced analytics as needed.
 
-customer_segmentation_cleaned_data.csv
+---
 
-EDA plots (.png files listed above)
+## 🤝 Contributions
 
-📌 Assumptions & Limitations
-Assumptions
+Contributions and suggestions are welcome! Please open an issue or submit a pull request.
 
-Synthetic data mimics typical telecom patterns (e.g., Postpaid → higher spend & tenure).
+---
 
-Predefined distributions approximate real-world telecom behavior.
+## 📄 License
 
-Limitations
-
-Synthetic data may not capture all real-world customer nuances.
-
-Preprocessing steps like one-hot encoding/scaling are optional (commented).
-
-Visualizations are basic and can be extended for advanced analysis.
+Distributed under the MIT License.
